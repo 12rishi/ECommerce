@@ -1,14 +1,22 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
+import { Provider } from "react-redux";
+import store from "./store/store";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
     <>
-      <h1>Hello,World</h1>
+      <Provider store={store}>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<h1>soon will be home page</h1>} />
+            <Route
+              path="/register"
+              element={<h1>soon will be register page</h1>}
+            />
+          </Routes>
+        </BrowserRouter>
+      </Provider>
     </>
   );
 }
