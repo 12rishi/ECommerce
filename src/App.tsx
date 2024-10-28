@@ -2,6 +2,10 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 import { Provider } from "react-redux";
 import store from "./store/store";
+import Home from "./pages/home/Home";
+import Register from "./pages/auth/register/Register";
+import "./index.css";
+import Login from "./pages/auth/login/Login";
 
 function App() {
   return (
@@ -9,11 +13,9 @@ function App() {
       <Provider store={store}>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<h1>soon will be home page</h1>} />
-            <Route
-              path="/register"
-              element={<h1>soon will be register page</h1>}
-            />
+            <Route path="/" element={<Home />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login />} />
           </Routes>
         </BrowserRouter>
       </Provider>
