@@ -1,9 +1,25 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import API from "../http/axiosInstance";
+
+interface registerData {
+  username: string;
+  email: string;
+  password: string;
+}
+interface loginData {
+  email: string;
+  password: string;
+}
 interface User {
   username: string;
   email: string;
   password: string;
   token: string;
+}
+enum Status {
+  Success = "success",
+  Error = "error",
+  Loading = "loading",
 }
 interface InitialState {
   user: User;
@@ -11,7 +27,7 @@ interface InitialState {
 }
 const initialState: InitialState = {
   user: {} as User,
-  status: "loading",
+  status: "" as Status,
 };
 
 const authSlice = createSlice({
@@ -28,3 +44,33 @@ const authSlice = createSlice({
 });
 export const { setUser, setStatus } = authSlice.actions;
 export default authSlice.reducer;
+function register(data: registerData) {
+  return async function registerThunk(dispatch: any) {
+    dispatch(setStatus(Status.Loading));
+    try {
+      const response = await API.post("register", data);
+      if (response.status === 200) {
+        dispatch(setStatus(Status.Success));
+      } else {
+        dispatch(setStatus(Status.Error));
+      }
+    } catch (error) {
+      dispatch(setStatus(Status.Error));
+    }
+  };
+}
+function login(data: loginData) {
+  return async function loginThunk(dispatch: any) {
+    dispatch(setStatus(Status.Loading));
+    try {
+      const response = await API.post("login", data);
+      if (response.status === 200) {
+        dispatch(setStatus(Status.Success));
+      } else {
+        dispatch(setStatus(Status.Error));
+      }
+    } catch (error) {
+      dispatch(setStatus(Status.Error));
+    }
+  };
+}
