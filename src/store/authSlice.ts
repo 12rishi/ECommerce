@@ -44,7 +44,7 @@ const authSlice = createSlice({
 });
 export const { setUser, setStatus } = authSlice.actions;
 export default authSlice.reducer;
-function register(data: registerData) {
+export function register(data: registerData) {
   return async function registerThunk(dispatch: any) {
     dispatch(setStatus(Status.Loading));
     try {
@@ -59,7 +59,7 @@ function register(data: registerData) {
     }
   };
 }
-function login(data: loginData) {
+export function login(data: loginData) {
   return async function loginThunk(dispatch: any) {
     dispatch(setStatus(Status.Loading));
     try {
