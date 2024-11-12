@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import API from "../http/axiosInstance";
+import { Status } from "../globals/types/globalType";
 
 interface registerData {
   username: string;
@@ -16,11 +17,7 @@ interface User {
   password: string;
   token: string;
 }
-enum Status {
-  Success = "success",
-  Error = "error",
-  Loading = "loading",
-}
+
 interface InitialState {
   user: User;
   status: string;
@@ -40,9 +37,15 @@ const authSlice = createSlice({
     setStatus(state: InitialState, action: PayloadAction<string>) {
       state.status = action.payload;
     },
+    resetStatus(state: InitialState) {
+      state.status = Status.Loading;
+    },
+    setToken(state: InitialState, action: PayloadAction<string>) {
+      state.user.token = action.payload;
+    },
   },
 });
-export const { setUser, setStatus } = authSlice.actions;
+export const { setUser, setStatus, resetStatus, setToken } = authSlice.actions;
 export default authSlice.reducer;
 export function register(data: registerData) {
   return async function registerThunk(dispatch: any) {
@@ -65,7 +68,10 @@ export function login(data: loginData) {
     try {
       const response = await API.post("login", data);
       if (response.status === 200) {
+        const { data } = response.data;
         dispatch(setStatus(Status.Success));
+        dispatch(setToken(data));
+        localStorage.setItem("token", data);
       } else {
         dispatch(setStatus(Status.Error));
       }
