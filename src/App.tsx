@@ -6,6 +6,7 @@ import Home from "./pages/home/Home";
 import Register from "./pages/auth/register/Register";
 import "./index.css";
 import Login from "./pages/auth/login/Login";
+import SinglePage from "./pages/singlePage/SinglePage";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/product/:id" element={<SinglePage />} />
           </Routes>
         </BrowserRouter>
       </Provider>

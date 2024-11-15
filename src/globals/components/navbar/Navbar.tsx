@@ -1,4 +1,20 @@
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAppSelector } from "../../../store/hooks";
+
 const Navbar = () => {
+  const navigate = useNavigate();
+  const [loggedIn, setLoggedIn] = useState<boolean>(false);
+  const { user } = useAppSelector((store) => store.auth);
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setLoggedIn(!!token || !!user.token);
+  }, [user.token]);
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+    setLoggedIn(false);
+  };
   return (
     <header
       id="page-header"
@@ -28,24 +44,36 @@ const Navbar = () => {
           </a>
         </div>
         <nav className="space-x-3 md:space-x-6">
-          <a
-            href="#"
+          <Link
+            to="#"
             className="text-sm font-semibold text-gray-900 hover:text-blue-600 dark:text-gray-100 dark:hover:text-blue-400"
           >
             <span>Features</span>
-          </a>
-          <a
-            href="#"
-            className="text-sm font-semibold text-gray-900 hover:text-blue-600 dark:text-gray-100 dark:hover:text-blue-400"
-          >
-            <span>Login</span>
-          </a>
-          <a
-            href="#"
-            className="text-sm font-semibold text-gray-900 hover:text-blue-600 dark:text-gray-100 dark:hover:text-blue-400"
-          >
-            <span>Logout</span>
-          </a>
+          </Link>
+          {loggedIn ? (
+            <Link
+              to="#"
+              className="text-sm font-semibold text-gray-900 hover:text-blue-600 dark:text-gray-100 dark:hover:text-blue-400"
+              onClick={handleLogout}
+            >
+              <span>Logout</span>
+            </Link>
+          ) : (
+            <>
+              <Link
+                to="/register"
+                className="text-sm font-semibold text-gray-900 hover:text-blue-600 dark:text-gray-100 dark:hover:text-blue-400"
+              >
+                <span>Register</span>
+              </Link>
+              <Link
+                to="/login"
+                className="text-sm font-semibold text-gray-900 hover:text-blue-600 dark:text-gray-100 dark:hover:text-blue-400"
+              >
+                <span>Login</span>
+              </Link>
+            </>
+          )}
         </nav>
       </div>
       {/* END Main Header Content */}
