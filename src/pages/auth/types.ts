@@ -42,3 +42,12 @@ export interface ProductState {
   status: Status;
   singleProductData: ProductType | null;
 }
+//cartType
+export interface CartItem {
+  product: ProductType;
+  quantity: number;
+}
+export interface CartState {
+  items: CartItem[];
+  status: Status;
+}

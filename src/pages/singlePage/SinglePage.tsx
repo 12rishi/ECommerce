@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import { useAppdispatch, useAppSelector } from "../../store/hooks";
 import { useEffect } from "react";
 import { fetchSingleProduct } from "../../store/productSlice";
+import { addToCart } from "../../store/cartSlice";
 
 const SinglePage = () => {
   const { id } = useParams();
@@ -9,6 +10,11 @@ const SinglePage = () => {
   const { status, singleProductData } = useAppSelector(
     (store) => store.product
   );
+  const handleAddToCart = () => {
+    if (id && singleProductData) {
+      dispatch(addToCart(id));
+    }
+  };
   useEffect(() => {
     if (id) {
       dispatch(fetchSingleProduct(id));
@@ -29,7 +35,10 @@ const SinglePage = () => {
               </div>
               <div className="flex -mx-2 mb-4">
                 <div className="w-1/2 px-2">
-                  <button className="w-full bg-gray-900 dark:bg-gray-600 text-white py-2 px-4 rounded-full font-bold hover:bg-gray-800 dark:hover:bg-gray-700">
+                  <button
+                    className="w-full bg-gray-900 dark:bg-gray-600 text-white py-2 px-4 rounded-full font-bold hover:bg-gray-800 dark:hover:bg-gray-700"
+                    onClick={handleAddToCart}
+                  >
                     Add to Cart
                   </button>
                 </div>

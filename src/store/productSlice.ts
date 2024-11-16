@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ProductState, ProductType } from "../pages/auth/types";
 import { Status } from "../globals/types/globalType";
 import { AppDispatch, RootState } from "./store";
-import API from "../http/axiosInstance";
+import { API } from "../http/axiosInstance";
 const initialState: ProductState = {
   product: [],
   status: Status.Loading,

@@ -51,13 +51,22 @@ const Navbar = () => {
             <span>Features</span>
           </Link>
           {loggedIn ? (
+            <>
             <Link
-              to="#"
+              to="/cart"
               className="text-sm font-semibold text-gray-900 hover:text-blue-600 dark:text-gray-100 dark:hover:text-blue-400"
-              onClick={handleLogout}
+            
             >
-              <span>Logout</span>
+              <span>Cart</span>
             </Link>
+             <Link
+             to="#"
+             className="text-sm font-semibold text-gray-900 hover:text-blue-600 dark:text-gray-100 dark:hover:text-blue-400"
+             onClick={handleLogout}
+           >
+             <span>Logout</span>
+           </Link>
+            </>
           ) : (
             <>
               <Link
