@@ -1,14 +1,18 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAppSelector } from "../../../store/hooks";
+import { useAppdispatch, useAppSelector } from "../../../store/hooks";
+import { fetchCart } from "../../../store/cartSlice";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
+  const dispatch = useAppdispatch();
   const { user } = useAppSelector((store) => store.auth);
+  const { items } = useAppSelector((store) => store.cart);
   useEffect(() => {
     const token = localStorage.getItem("token");
     setLoggedIn(!!token || !!user.token);
+    dispatch(fetchCart());
   }, [user.token]);
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -23,8 +27,8 @@ const Navbar = () => {
       {/* Main Header Content */}
       <div className="container mx-auto flex flex-col gap-4 px-4 text-center sm:flex-row sm:items-center sm:justify-between sm:gap-0 lg:px-8 xl:max-w-7xl">
         <div>
-          <a
-            href="#"
+          <Link
+            to="/"
             className="group inline-flex items-center gap-2 text-lg font-bold tracking-wide text-gray-900 hover:text-gray-600 dark:text-gray-100 dark:hover:text-gray-300"
           >
             <svg
@@ -41,7 +45,7 @@ const Navbar = () => {
               />
             </svg>
             <span>Rishi Stores</span>
-          </a>
+          </Link>
         </div>
         <nav className="space-x-3 md:space-x-6">
           <Link
@@ -52,20 +56,21 @@ const Navbar = () => {
           </Link>
           {loggedIn ? (
             <>
-            <Link
-              to="/cart"
-              className="text-sm font-semibold text-gray-900 hover:text-blue-600 dark:text-gray-100 dark:hover:text-blue-400"
-            
-            >
-              <span>Cart</span>
-            </Link>
-             <Link
-             to="#"
-             className="text-sm font-semibold text-gray-900 hover:text-blue-600 dark:text-gray-100 dark:hover:text-blue-400"
-             onClick={handleLogout}
-           >
-             <span>Logout</span>
-           </Link>
+              <Link
+                to="/cart"
+                className="text-sm font-semibold text-gray-900 hover:text-blue-600 dark:text-gray-100 dark:hover:text-blue-400"
+              >
+                <span>
+                  Cart<sub>{items.length}</sub>
+                </span>
+              </Link>
+              <Link
+                to="#"
+                className="text-sm font-semibold text-gray-900 hover:text-blue-600 dark:text-gray-100 dark:hover:text-blue-400"
+                onClick={handleLogout}
+              >
+                <span>Logout</span>
+              </Link>
             </>
           ) : (
             <>

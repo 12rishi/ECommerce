@@ -64,7 +64,7 @@ export function fetchSingleProduct(productId: string) {
         const response = await API.get(`admin/product/${productId}`);
         if (response.status === 200) {
           dispatch(setStatus(Status.Success));
-          const { data } = response.data;
+          const data = response.data.data;
           dispatch(setSingleProductdata(data));
         } else {
           dispatch(setStatus(Status.Error));

@@ -7,6 +7,7 @@ import Register from "./pages/auth/register/Register";
 import "./index.css";
 import Login from "./pages/auth/login/Login";
 import SinglePage from "./pages/singlePage/SinglePage";
+import Cart from "./globals/components/cart/Cart";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
             <Route path="/product/:id" element={<SinglePage />} />
+            <Route path="/cart" element={<Cart />} />
           </Routes>
         </BrowserRouter>
       </Provider>

@@ -3,6 +3,7 @@ import { useAppdispatch, useAppSelector } from "../../store/hooks";
 import { useEffect } from "react";
 import { fetchSingleProduct } from "../../store/productSlice";
 import { addToCart } from "../../store/cartSlice";
+import Navbar from "../../globals/components/navbar/Navbar";
 
 const SinglePage = () => {
   const { id } = useParams();
@@ -22,6 +23,7 @@ const SinglePage = () => {
   }, []);
   return (
     <>
+      <Navbar />
       <div className="bg-gray-100 dark:bg-gray-800 py-8">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row -mx-4">

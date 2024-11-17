@@ -44,7 +44,7 @@ export interface ProductState {
 }
 //cartType
 export interface CartItem {
-  product: ProductType;
+  Product: ProductType;
   quantity: number;
 }
 export interface CartState {
