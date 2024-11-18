@@ -8,6 +8,7 @@ import "./index.css";
 import Login from "./pages/auth/login/Login";
 import SinglePage from "./pages/singlePage/SinglePage";
 import Cart from "./globals/components/cart/Cart";
+import Checkout from "./globals/components/checkout/Checkout";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/product/:id" element={<SinglePage />} />
             <Route path="/cart" element={<Cart />} />
+            <Route path="/checkout" element={<Checkout />} />
           </Routes>
         </BrowserRouter>
       </Provider>
