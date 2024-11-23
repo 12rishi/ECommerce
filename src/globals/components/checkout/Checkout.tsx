@@ -1,14 +1,20 @@
-import { ChangeEvent, FormEvent, useState } from "react";
-import { useAppSelector } from "../../../store/hooks";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { useAppdispatch, useAppSelector } from "../../../store/hooks";
 import Navbar from "../navbar/Navbar";
 import {
   ItemDetails,
   OrderData,
   PaymentMethod,
 } from "../../../pages/auth/types";
+import { orderItem } from "../../../store/checkOutSlice";
+import { Status } from "../../types/globalType";
+import { useNavigate } from "react-router-dom";
 
 const Checkout = () => {
   const { items } = useAppSelector((store) => store.cart);
+  const dispatch = useAppdispatch();
+  const navigate = useNavigate();
+  const { khaltiUrl, status } = useAppSelector((store) => store.orders);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(
     PaymentMethod.COD
   );
@@ -34,7 +40,7 @@ const Checkout = () => {
     const { name, value } = e.target;
     setData({ ...data, [name]: value });
   };
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const itemDetails: ItemDetails[] = items.map((item) => {
       return {
@@ -51,7 +57,17 @@ const Checkout = () => {
       items: itemDetails,
       totalAmount: totalAmount,
     };
+    await dispatch(orderItem(orderData));
+    if (khaltiUrl) {
+      window.location.href = khaltiUrl;
+    }
   };
+  useEffect(() => {
+    if (status === Status.Success) {
+      alert("order placed successfully");
+      navigate("/");
+    }
+  }, [status]);
 
   return (
     <>
@@ -214,20 +230,21 @@ const Checkout = () => {
                 <p className="text-2xl font-semibold text-gray-900">Rs </p>
               </div>
             </div>
-
-            <button
-              type="submit"
-              className="mt-4 mb-8 w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white"
-            >
-              Place Order
-            </button>
-
-            <button
-              className="mt-4 mb-8 w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white"
-              style={{ backgroundColor: "purple" }}
-            >
-              Pay With Khalti
-            </button>
+            {paymentMethod === PaymentMethod.Khalti ? (
+              <button
+                className="mt-4 mb-8 w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white"
+                style={{ backgroundColor: "purple" }}
+              >
+                Pay With Khalti
+              </button>
+            ) : (
+              <button
+                type="submit"
+                className="mt-4 mb-8 w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white"
+              >
+                Place Order
+              </button>
+            )}
           </div>
         </form>
       </div>

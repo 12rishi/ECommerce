@@ -68,3 +68,11 @@ export interface OrderData {
   };
   items: ItemDetails[];
 }
+export interface OrderResponseItem extends ItemDetails {
+  orderId: string;
+}
+export interface OrderResponse {
+  items: OrderResponseItem[];
+  status: Status;
+  khaltiUrl: string | null;
+}
