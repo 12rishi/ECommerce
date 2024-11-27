@@ -9,6 +9,8 @@ import Login from "./pages/auth/login/Login";
 import SinglePage from "./pages/singlePage/SinglePage";
 import Cart from "./globals/components/cart/Cart";
 import Checkout from "./globals/components/checkout/Checkout";
+import MyOrder from "./globals/components/orders/MyOrder";
+import MyOrderDetails from "./globals/components/orders/MyOrderDetails";
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
             <Route path="/product/:id" element={<SinglePage />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/checkout" element={<Checkout />} />
+            <Route path="/myorders" element={<MyOrder />} />
+            <Route path="/myorders/:id" element={<MyOrderDetails />} />
           </Routes>
         </BrowserRouter>
       </Provider>
