@@ -84,6 +84,10 @@ export interface OrderData {
   paymentDetails: Payment;
   items: ItemDetails[];
 }
+export interface UserData {
+  userName: string;
+  email: string;
+}
 export interface OrderResponseItem extends ItemDetails {
   orderId: string;
 }
@@ -92,6 +96,7 @@ export interface OrderResponse {
   status: Status;
   khaltiUrl: string | null;
   myOrders: MyOrdersData[];
+  orderDetails: OrderDetails[];
 }
 export interface MyOrdersData {
   id: string;
@@ -102,6 +107,14 @@ export interface MyOrdersData {
   createdAt: string;
 
   paymentId: string;
-  userId: string;
+  userId: UserData;
+  User: UserData;
   Payment: OrderPaymentData;
+}
+export interface OrderDetails {
+  id: string;
+  quantity: number;
+  orderId: string;
+  Product: ProductType;
+  Order: MyOrdersData;
 }

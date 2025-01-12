@@ -1,12 +1,21 @@
-import { deleteCartItem, updateCartItem } from "../../../store/cartSlice";
+import { useEffect } from "react";
+import {
+  deleteCartItem,
+  setStatus,
+  updateCartItem,
+} from "../../../store/cartSlice";
 import { useAppdispatch, useAppSelector } from "../../../store/hooks";
 import Navbar from "../navbar/Navbar";
+import { Status } from "../../types/globalType";
+import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
-  const { items } = useAppSelector((store) => store.cart);
+  const { items, status } = useAppSelector((store) => store.cart);
+  const navigate = useNavigate();
   const dispatch = useAppdispatch();
   const handleDelete = (productId: string) => {
     dispatch(deleteCartItem(productId));
+    console.log("deleted");
   };
   const handleUpdate = (productId: string, quantity: number) => {
     dispatch(updateCartItem(productId, quantity));
@@ -19,6 +28,10 @@ const Cart = () => {
     (total, item) => item?.Product?.productPrice * item?.quantity + total,
     0
   );
+  const handleNavigate = () => {
+    navigate("/checkout");
+  };
+
   return (
     <>
       <Navbar />
@@ -122,7 +135,10 @@ const Cart = () => {
                 <p className="text-sm text-gray-700">including VAT</p>
               </div>
             </div>
-            <button className="mt-6 w-full rounded-md bg-blue-500 py-1.5 font-medium text-blue-50 hover:bg-blue-600">
+            <button
+              onClick={handleNavigate}
+              className="mt-6 w-full rounded-md bg-blue-500 py-1.5 font-medium text-blue-50 hover:bg-blue-600"
+            >
               Check out
             </button>
           </div>

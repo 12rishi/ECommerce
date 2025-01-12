@@ -3,8 +3,11 @@ import { Status } from "../globals/types/globalType";
 import {
   MyOrdersData,
   OrderData,
+  OrderDetails,
+  OrderPaymentData,
   OrderResponse,
   OrderResponseItem,
+  OrderStatus,
 } from "../pages/auth/types";
 import { AppDispatch } from "./store";
 import { APIforAuthenticate } from "../http/axiosInstance";
@@ -14,7 +17,9 @@ const initialState: OrderResponse = {
   status: Status.Loading,
   khaltiUrl: null,
   myOrders: [],
+  orderDetails: [],
 };
+
 const orderSlice = createSlice({
   name: "order",
   initialState,
@@ -34,11 +39,36 @@ const orderSlice = createSlice({
     ) {
       state.khaltiUrl = action.payload;
     },
+    setMyOrderDetails(
+      state: OrderResponse,
+      action: PayloadAction<OrderDetails[]>
+    ) {
+      state.orderDetails = action.payload;
+    },
+    updateOrderStatus(
+      state: OrderResponse,
+      action: PayloadAction<{ status: OrderStatus; orderId: string }>
+    ) {
+      const status = action.payload.status;
+      const orderId = action.payload.orderId;
+      const updatedOrder = state.myOrders.map((order) =>
+        order.id == orderId ? { ...order, orderStatus: status } : order
+      );
+      state.myOrders = updatedOrder;
+    },
   },
 });
-export const { setItems, setStatus, setKhaltiUrl, setMyOrders } =
-  orderSlice.actions;
+
+export const {
+  setItems,
+  setStatus,
+  setKhaltiUrl,
+  setMyOrders,
+  updateOrderStatus,
+  setMyOrderDetails,
+} = orderSlice.actions;
 export default orderSlice.reducer;
+
 export function orderItem(data: OrderData) {
   return async function orderItemThunk(dispatch: AppDispatch) {
     dispatch(setStatus(Status.Loading));
@@ -68,6 +98,22 @@ export function fetchMyOrder() {
       if (response.status === 200) {
         dispatch(setStatus(Status.Success));
         dispatch(setMyOrders(response.data.data));
+      } else {
+        dispatch(setStatus(Status.Error));
+      }
+    } catch (error) {
+      dispatch(setStatus(Status.Error));
+    }
+  };
+}
+export function fetchMyOrderDetails(id: string) {
+  return async function fetchMyOrderDetailsThunk(dispatch: AppDispatch) {
+    dispatch(setStatus(Status.Loading));
+    try {
+      const response = await APIforAuthenticate.get("/order/customer/" + id);
+      if (response.status === 200) {
+        dispatch(setStatus(Status.Success));
+        dispatch(setMyOrderDetails(response.data.data));
       } else {
         dispatch(setStatus(Status.Error));
       }

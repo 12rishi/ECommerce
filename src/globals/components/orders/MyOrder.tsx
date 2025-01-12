@@ -2,12 +2,13 @@ import { useEffect } from "react";
 import { useAppdispatch, useAppSelector } from "../../../store/hooks";
 import Navbar from "../navbar/Navbar";
 import { fetchMyOrder } from "../../../store/checkOutSlice";
+import { Link } from "react-router-dom";
 
 const MyOrder = () => {
   const dispatch = useAppdispatch();
   const { myOrders } = useAppSelector((store) => store.orders);
   useEffect(() => {
-    dispatch(fetchMyOrder);
+    dispatch(fetchMyOrder());
   }, []);
   return (
     <>
@@ -107,12 +108,14 @@ const MyOrder = () => {
                                         </div>
                                     </td> */}
                             <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                              <p
-                                className="text-blue-900 whitespace-no-wrap"
-                                style={{ textDecoration: "underline" }}
-                              >
-                                {order.id}
-                              </p>
+                              <Link to={`/myorders/${order.id}`}>
+                                <p
+                                  className="text-blue-900 whitespace-no-wrap"
+                                  style={{ textDecoration: "underline" }}
+                                >
+                                  {order.id}
+                                </p>
+                              </Link>
                             </td>
                             <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                               <p className="text-gray-900 whitespace-no-wrap">

@@ -1,4 +1,11 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+// import Navbar from "../../globals/components/navbar/Navbar"
+// import { useAppDispatch, useAppSelector } from "../../store/hooks"
+// import { ItemDetails, OrderData, PaymentMethod } from "../../globals/types/checkoutTypes"
+
+import { useNavigate } from "react-router-dom";
+import { Status } from "../../types/globalType";
+import { orderItem } from "../../../store/checkOutSlice";
 import { useAppdispatch, useAppSelector } from "../../../store/hooks";
 import Navbar from "../navbar/Navbar";
 import {
@@ -6,15 +13,12 @@ import {
   OrderData,
   PaymentMethod,
 } from "../../../pages/auth/types";
-import { orderItem } from "../../../store/checkOutSlice";
-import { Status } from "../../types/globalType";
-import { useNavigate } from "react-router-dom";
 
 const Checkout = () => {
-  const { items } = useAppSelector((store) => store.cart);
-  const dispatch = useAppdispatch();
+  const { items } = useAppSelector((state) => state.cart);
+  const { khaltiUrl, status } = useAppSelector((state) => state.orders);
   const navigate = useNavigate();
-  const { khaltiUrl, status } = useAppSelector((store) => store.orders);
+  const dispatch = useAppdispatch();
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(
     PaymentMethod.COD
   );
@@ -23,11 +27,11 @@ const Checkout = () => {
     shippingAddress: "",
     totalAmount: 0,
     paymentDetails: {
-      paymentMethod,
+      paymentMethod: PaymentMethod.COD,
     },
     items: [],
   });
-  const handlePaymentChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handlePaymentMethod = (e: ChangeEvent<HTMLInputElement>) => {
     setPaymentMethod(e.target.value as PaymentMethod);
     setData({
       ...data,
@@ -36,43 +40,50 @@ const Checkout = () => {
       },
     });
   };
-  const handleFormDataChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setData({ ...data, [name]: value });
+    setData({
+      ...data,
+      [name]: value,
+    });
+    console.log(data);
   };
+  let subtotal = items.reduce(
+    (total, item) => item.Product.productPrice * item.quantity + total,
+    0
+  );
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const itemDetails: ItemDetails[] = items.map((item) => {
       return {
-        quantity: item?.quantity,
-        productId: item?.Product?.id,
+        productId: item.Product.id,
+        quantity: item.quantity,
       };
     });
-    const totalAmount = items.reduce(
-      (total, item) => item?.Product?.productPrice * item?.quantity + total,
-      0
-    );
+
     const orderData = {
       ...data,
       items: itemDetails,
-      totalAmount: totalAmount,
+      totalAmount: subtotal,
     };
+    console.log(orderData);
     await dispatch(orderItem(orderData));
-    if (khaltiUrl) {
-      window.location.href = khaltiUrl;
-    }
   };
   useEffect(() => {
+    if (khaltiUrl) {
+      window.location.href = khaltiUrl;
+      return;
+    }
     if (status === Status.Success) {
-      alert("order placed successfully");
+      alert("Order Placed successfully");
       navigate("/");
     }
-  }, [status]);
+  }, [status, khaltiUrl]);
 
   return (
     <>
       <Navbar />
-      <div className="flex flex-col items-center border-b bg-white py-4 sm:flex-row sm:px-10 lg:px-20 xl:px-32">
+      <div className="flex flex-col items-center border-b bg-white mt-[-100px] py-4 sm:flex-row sm:px-10 lg:px-20 xl:px-32">
         <div className="mt-4 py-7 text-xs sm:mt-0 sm:ml-auto sm:text-base"></div>
       </div>
       <div className="grid sm:px-10 lg:grid-cols-2 lg:px-20 xl:px-32">
@@ -99,10 +110,10 @@ const Checkout = () => {
                         {item?.Product?.productName}
                       </span>
                       <span className="float-right text-gray-400">
-                        {item?.quantity}{" "}
+                        Qty :{item?.quantity}{" "}
                       </span>
                       <p className="text-lg font-bold">
-                        Rs. {item?.Product?.productPrice}
+                        Rs. {item?.Product?.productPrice}{" "}
                       </p>
                     </div>
                   </div>
@@ -119,7 +130,7 @@ const Checkout = () => {
                 type="radio"
                 name="radio"
                 value={PaymentMethod.COD}
-                onChange={handlePaymentChange}
+                onChange={handlePaymentMethod}
               />
               <span className="peer-checked:border-gray-700 absolute right-4 top-1/2 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white"></span>
               <label
@@ -144,7 +155,7 @@ const Checkout = () => {
                 id="radio_2"
                 type="radio"
                 value={PaymentMethod.Khalti}
-                onChange={handlePaymentChange}
+                onChange={handlePaymentMethod}
                 name="radio"
               />
               <span className="peer-checked:border-gray-700 absolute right-4 top-1/2 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white"></span>
@@ -183,8 +194,8 @@ const Checkout = () => {
                   id="phoneNumber"
                   name="phoneNumber"
                   className="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500"
+                  onChange={handleChange}
                   placeholder="Your Phone Number"
-                  onChange={handleFormDataChange}
                 />
               </div>
 
@@ -202,9 +213,8 @@ const Checkout = () => {
                     name="shippingAddress"
                     className="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500"
                     placeholder="Street Address"
-                    onChange={handleFormDataChange}
+                    onChange={handleChange}
                   />
-
                   <div className="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
                     <img
                       className="h-4 w-4 object-contain"
@@ -218,20 +228,24 @@ const Checkout = () => {
               <div className="mt-6 border-t border-b py-2">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-medium text-gray-900">Subtotal</p>
-                  <p className="font-semibold text-gray-900">Rs </p>
+                  <p className="font-semibold text-gray-900">Rs {subtotal}</p>
                 </div>
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-medium text-gray-900">Shipping</p>
-                  <p className="font-semibold text-gray-900">Rs</p>
+                  <p className="font-semibold text-gray-900">Rs 100</p>
                 </div>
               </div>
               <div className="mt-6 flex items-center justify-between">
                 <p className="text-sm font-medium text-gray-900">Total</p>
-                <p className="text-2xl font-semibold text-gray-900">Rs </p>
+                <p className="text-2xl font-semibold text-gray-900">
+                  Rs {subtotal + 100}
+                </p>
               </div>
             </div>
+
             {paymentMethod === PaymentMethod.Khalti ? (
               <button
+                type="submit"
                 className="mt-4 mb-8 w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white"
                 style={{ backgroundColor: "purple" }}
               >

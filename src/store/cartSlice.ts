@@ -44,6 +44,7 @@ export const { setItems, setStatus, setDeleteItem, setUpdateItem } =
 export default cartSlice.reducer;
 export function addToCart(productId: string) {
   return async function addToCartThunk(dispatch: AppDispatch) {
+    console.log("token is", localStorage.getItem("token"));
     try {
       const response = await APIforAuthenticate.post("customer/cart", {
         productId,
@@ -81,7 +82,7 @@ export function deleteCartItem(productId: string) {
       const response = await APIforAuthenticate.delete(
         "customer/cart/" + productId
       );
-      if (response.status === 200) {
+      if (response.status === 204) {
         dispatch(setStatus(Status.Success));
         dispatch(setDeleteItem({ productId }));
       } else {
