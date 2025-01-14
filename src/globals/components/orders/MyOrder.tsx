@@ -1,15 +1,39 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAppdispatch, useAppSelector } from "../../../store/hooks";
 import Navbar from "../navbar/Navbar";
 import { fetchMyOrder } from "../../../store/checkOutSlice";
 import { Link } from "react-router-dom";
+import { OrderStatus } from "../../../pages/auth/types";
 
 const MyOrder = () => {
+  const [selectedItem, setSelectedItem] = useState<OrderStatus>(
+    OrderStatus.All
+  );
+  const [searchitem, setSearchItem] = useState<string>("");
+  const [date, setDate] = useState<string>("");
   const dispatch = useAppdispatch();
   const { myOrders } = useAppSelector((store) => store.orders);
   useEffect(() => {
     dispatch(fetchMyOrder());
   }, []);
+  const filteredData = myOrders
+    .filter(
+      (order) =>
+        selectedItem == OrderStatus.All || order.orderStatus == selectedItem
+    )
+    .filter(
+      (order) =>
+        searchitem == "" ||
+        order.id.includes(searchitem) ||
+        order.Payment.paymentMethod.includes(searchitem) ||
+        order.Payment.paymentStatus.includes(searchitem) ||
+        order.totalAmount.toString().includes(searchitem)
+    )
+    .filter(
+      (order) =>
+        new Date(searchitem).toLocaleDateString() ==
+        new Date(order.createdAt).toLocaleDateString()
+    );
   return (
     <>
       <Navbar />
@@ -22,13 +46,18 @@ const MyOrder = () => {
             <div className="my-2 flex sm:flex-row flex-col">
               <div className="flex flex-row mb-1 sm:mb-0">
                 <div className="relative">
-                  <select className="appearance-none h-full rounded-r border-t sm:rounded-r-none sm:border-r-0 border-r border-b block appearance-none w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-white focus:border-gray-500">
-                    <option value="all">all</option>
-                    <option value="pending">pending</option>
-                    <option value="delivered">delivered</option>
-                    <option value="ontheway">ontheway</option>
-                    <option value="cancelled">cancelled</option>
-                    <option value="preparation">preparation</option>
+                  <select
+                    onChange={(e) =>
+                      setSelectedItem(e.target.value as OrderStatus)
+                    }
+                    className="appearance-none h-full rounded-r border-t sm:rounded-r-none sm:border-r-0 border-r border-b block appearance-none w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-white focus:border-gray-500"
+                  >
+                    <option value={OrderStatus.All}>all</option>
+                    <option value={OrderStatus.Pending}>pending</option>
+                    <option value={OrderStatus.Delivered}>delivered</option>
+                    <option value={OrderStatus.Ontheway}>ontheway</option>
+                    <option value={OrderStatus.Cancel}>cancelled</option>
+                    <option value={OrderStatus.Preparation}>preparation</option>
                   </select>
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                     <svg
@@ -52,7 +81,8 @@ const MyOrder = () => {
                 </span>
                 <input
                   placeholder="Search"
-                  value=""
+                  value={searchitem}
+                  onChange={(e) => setSearchItem(e.target.value)}
                   className="appearance-none rounded-r rounded-l sm:rounded-l-none border border-gray-400 border-b block pl-8 pr-6 py-2 w-full bg-white text-sm placeholder-gray-400 text-gray-700 focus:bg-white focus:placeholder-gray-600 focus:text-gray-700 focus:outline-none"
                 />
               </div>
@@ -60,7 +90,8 @@ const MyOrder = () => {
                 <input
                   placeholder="Search"
                   type="date"
-                  value=""
+                  onChange={(e) => setDate(e.target.value)}
+                  value={date}
                   className="appearance-none rounded-r rounded-l sm:rounded-l-none border border-gray-400 border-b block pl-8 pr-6 py-2 w-full bg-white text-sm placeholder-gray-400 text-gray-700 focus:bg-white focus:placeholder-gray-600 focus:text-gray-700 focus:outline-none"
                 />
               </div>
@@ -89,8 +120,8 @@ const MyOrder = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {myOrders.length > 0 &&
-                      myOrders.map((order) => {
+                    {filteredData.length > 0 &&
+                      filteredData.map((order) => {
                         return (
                           <tr>
                             {/* <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">

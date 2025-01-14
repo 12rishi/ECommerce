@@ -2,7 +2,7 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import { Props, UserData } from "./types";
 
 const Form: React.FC<Props> = ({ type, onSubmit }) => {
-  const [userData, setUserData] = useState<UserData>({
+  const [userData, setUserData] = useState<any>({
     username: "",
     email: "",
     password: "",

@@ -48,6 +48,7 @@ export enum OrderStatus {
   Ontheway = "ontheway",
   Cancel = "cancelled",
   Preparation = "preparation",
+  All = "all",
 }
 //cartType
 export interface CartItem {
