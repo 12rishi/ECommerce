@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
 import { useAppdispatch, useAppSelector } from "../../../store/hooks";
 import Navbar from "../navbar/Navbar";
-import { fetchMyOrder } from "../../../store/checkOutSlice";
+import {
+  fetchMyOrder,
+  updateOrderStatusInStore,
+} from "../../../store/checkOutSlice";
 import { Link } from "react-router-dom";
 import { OrderStatus } from "../../../pages/auth/types";
+import { socket } from "../../../App";
 
 const MyOrder = () => {
   const [selectedItem, setSelectedItem] = useState<OrderStatus>(
@@ -34,6 +38,11 @@ const MyOrder = () => {
         new Date(searchitem).toLocaleDateString() ==
         new Date(order.createdAt).toLocaleDateString()
     );
+  useEffect(() => {
+    socket.on("statusUpdated", (data: any) => {
+      dispatch(updateOrderStatusInStore(data));
+    });
+  }, [socket]);
   return (
     <>
       <Navbar />

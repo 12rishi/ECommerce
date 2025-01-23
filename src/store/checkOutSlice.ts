@@ -122,3 +122,8 @@ export function fetchMyOrderDetails(id: string) {
     }
   };
 }
+export function updateOrderStatusInStore(data: any) {
+  return async function updateOrderStatusInStore(dispatch: AppDispatch) {
+    dispatch(updateOrderStatus(data));
+  };
+}

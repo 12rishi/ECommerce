@@ -11,7 +11,12 @@ import Cart from "./globals/components/cart/Cart";
 import Checkout from "./globals/components/checkout/Checkout";
 import MyOrder from "./globals/components/orders/MyOrder";
 import MyOrderDetails from "./globals/components/orders/MyOrderDetails";
-
+import { io } from "socket.io-client";
+export const socket = io("http://localhost:3000/", {
+  auth: {
+    token: localStorage.getItem("token"),
+  },
+});
 function App() {
   return (
     <>
